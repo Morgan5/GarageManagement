@@ -1,0 +1,84 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.Users.DetailsModel
+
+@{
+    ViewData["Title"] = "Détails du Client";
+}
+
+<h1 class="mb-4">Détails du Client</h1>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4><i class="bi bi-person-circle"></i> Informations du Client</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Administrateur</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.User.IsAdmin)</dd>
+
+            <dt class="col-sm-3">Prénom</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.User.Firstname)</dd>
+
+            <dt class="col-sm-3">Nom</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.User.Lastname)</dd>
+
+            <dt class="col-sm-3">Date de Naissance</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.User.Birthdate)</dd>
+
+            <dt class="col-sm-3">Téléphone</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.User.Phone)</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.User.Email)</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header bg-secondary text-white">
+        <h4><i class="bi bi-car-front-fill"></i> Historique des Véhicules</h4>
+    </div>
+    <div class="card-body">
+        @if (Model.User.Vehicles != null && Model.User.Vehicles.Any())
+        {
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Immatriculation</th>
+                        <th>Marque</th>
+                        <th>Modèle</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var vehicle in Model.User.Vehicles)
+                    {
+                        <tr>
+                            <td>@vehicle.Immatriculation</td>
+                            <td>@vehicle.Model?.Brand?.Label</td>
+                            <td>@vehicle.Model?.Label</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" asp-page="/Admin/Vehicles/Details" asp-route-id="@vehicle.Id">
+                                    <i class="bi bi-info-circle"></i> Voir Détails
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">Aucun véhicule associé à ce client.</p>
+        }
+    </div>
+
+    <div class="mt-4 text-center">
+        <a asp-page="./Edit" asp-route-id="@Model.User.Id" class="btn btn-secondary">
+            <i class="bi bi-pencil"></i> Modifier
+        </a>
+        <a asp-page="./Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>

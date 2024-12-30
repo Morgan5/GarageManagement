@@ -1,0 +1,52 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.Employees.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="mb-4">Gestion des Employés</h1>
+
+<p>
+    <a asp-page="Create">Ajouter un employé</a>
+</p>
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Employee[0].Firstname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Employee[0].Lastname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Employee[0].Birthdate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Employee[0].Phone)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Employee) {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Firstname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Lastname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Birthdate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    <a class="btn btn-warning btn-sm" asp-page="./Edit" asp-route-id="@item.Id">Edit</a> <a class="btn btn-info btn-sm" asp-page="./Details" asp-route-id="@item.Id">Details</a>
+                </td>
+            </tr>
+    }
+    </tbody>
+</table>

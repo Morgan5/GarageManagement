@@ -1,0 +1,59 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.Vehicles.EditModel
+
+@{
+    ViewData["Title"] = "Modifier un véhicule";
+}
+
+<h1 class="mb-4">Modification d'un Véhicule</h1>
+<hr />
+<!-- Conteneur principal -->
+<div class="container mt-5">
+    <!-- Formulaire de création -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Vehicle.Id" />
+                <!-- Champ Immatriculation -->
+                <div class="form-group">
+                    <span class="text-danger">*</span>
+                    <label asp-for="Vehicle.Immatriculation" class="control-label font-weight-bold"></label>
+                    <input asp-for="Vehicle.Immatriculation" class="form-control"/>
+                    <span asp-validation-for="Vehicle.Immatriculation" class="text-danger"></span>
+                </div>
+
+                <!-- Champ ModelId -->
+                <div class="form-group">
+                    <span class="text-danger">*</span>
+                    <label asp-for="Vehicle.Model" class="control-label font-weight-bold"></label>
+                    <select asp-for="Vehicle.ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
+                    <span asp-validation-for="Vehicle.ModelId" class="text-danger"></span>
+                </div>
+
+                <!-- Champ UserId -->
+                <div class="form-group">
+                    <label asp-for="Vehicle.User" class="control-label font-weight-bold"></label>
+                    <select asp-for="Vehicle.UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                    <span asp-validation-for="Vehicle.UserId" class="text-danger"></span>
+                </div>
+
+                <!-- Bouton de soumission -->
+                <br/>
+                <div class="form-group text-center">
+                    <input type="submit" value="Modifier" class="btn btn-primary btn-lg" />
+                </div>
+            </form>
+
+            <!-- Lien de retour -->
+            <div class="text-center mt-4">
+                <a asp-page="Index" class="btn btn-link">Retour à la liste des véhicules</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

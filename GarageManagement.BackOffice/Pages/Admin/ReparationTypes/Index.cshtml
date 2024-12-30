@@ -1,0 +1,40 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.ReparationTypes.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 class="mb-4">Gestion des types de réparation</h1>
+
+<p>
+    <a asp-page="Create">Ajouter un type de réparation</a>
+</p>
+<table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ReparationType[0].Label)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReparationType[0].DefaultCost)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.ReparationType) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Label)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DefaultCost)
+            </td>
+            <td>
+                <a class="btn btn-warning btn-sm" asp-page="./Edit" asp-route-id="@item.Id">Edit</a> <a class="btn btn-info btn-sm" asp-page="./Details" asp-route-id="@item.Id">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

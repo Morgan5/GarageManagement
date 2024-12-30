@@ -1,0 +1,84 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.Vehicles.DetailsModel
+@using GarageManagement.BackOffice.Helpers
+
+@{
+    ViewData["Title"] = "Détails du Véhicule";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">
+        <i class="bi bi-car-front"></i> Détails du Véhicule
+    </h1>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="bi bi-info-circle"></i> Informations Générales</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Immatriculation</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Vehicle.Immatriculation)</dd>
+
+                <dt class="col-sm-3">Modèle</dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Vehicle.Model.Brand.Label) @Html.DisplayFor(model => model.Vehicle.Model.Label)
+                </dd>
+
+                <dt class="col-sm-3">Client</dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Vehicle.User.Lastname) @Html.DisplayFor(model => model.Vehicle.User.Firstname)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h4><i class="bi bi-tools"></i> Réparations Associées</h4>
+        </div>
+        <div class="card-body">
+            @if (Model.Vehicle.Reparations != null && Model.Vehicle.Reparations.Any())
+            {
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Description</th>
+                            <th>Date de Création</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var reparation in Model.Vehicle.Reparations)
+                        {
+                            <tr>
+                                <td>@reparation.Description</td>
+                                <td>@reparation.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                <td>@StatusHelper.GetStatusDescription(reparation.Status)</td>
+                                <td>
+                                    <a asp-page="/Admin/Reparations/Details" asp-route-id="@reparation.Id" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-eye"></i> Voir Détails
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-muted">Aucune réparation associée à ce véhicule.</p>
+            }
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a asp-page="./Edit" asp-route-id="@Model.Vehicle.Id" class="btn btn-secondary">
+            <i class="bi bi-pencil"></i> Modifier
+        </a>
+        <a asp-page="./Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>

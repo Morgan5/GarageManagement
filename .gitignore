@@ -1,0 +1,9 @@
+GarageManagement.BackOffice/bin/*
+GarageManagement.BackOffice/Migrations/*
+GarageManagement.BackOffice/obj/*
+GarageManagement.BackOffice/wwwroot/*
+
+GarageManagement.FrontOffice/bin/*
+GarageManagement.FrontOffice/Migrations/*
+GarageManagement.FrontOffice/obj/*
+GarageManagement.FrontOffice/wwwroot/*

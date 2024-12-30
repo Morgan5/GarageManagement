@@ -1,0 +1,159 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.Reparations.DetailsModel
+@using GarageManagement.BackOffice.Helpers
+
+@{
+    ViewData["Title"] = "Détails de la réparation";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center mb-4">
+        <i class="bi bi-tools"></i> Détails de la réparation
+    </h1>
+
+    @if (Model.Reparation.Status == 2 && Model.Reparation.EndAt != null)
+    {
+        <div class="text-center mb-4">
+            <form method="post" asp-page-handler="GenerateInvoice" asp-route-id="@Model.Reparation.Id">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-file-earmark-text"></i> Générer facture
+                </button>
+            </form>
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="bi bi-info-circle"></i> Informations générales</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Reparation.Description)</dd>
+
+                <dt class="col-sm-3">Statut</dt>
+                <dd class="col-sm-9">@StatusHelper.GetStatusDescription(Model.Reparation.Status)</dd>
+
+                <dt class="col-sm-3">Date de création</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Reparation.CreatedAt)</dd>
+
+                <dt class="col-sm-3">Date de début</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Reparation.StartAt)</dd>
+
+                <dt class="col-sm-3">Date de fin</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Reparation.EndAt)</dd>
+
+                <dt class="col-sm-3">Véhicule</dt>
+                <dd class="col-sm-9">
+                    @Html.DisplayFor(model => model.Reparation.Vehicle.Model.Brand.Label) 
+                    @Html.DisplayFor(model => model.Reparation.Vehicle.Model.Label) | 
+                    @Html.DisplayFor(model => model.Reparation.Vehicle.Immatriculation) | 
+                    @Html.DisplayFor(model => model.Reparation.Vehicle.User.Lastname) 
+                    @Html.DisplayFor(model => model.Reparation.Vehicle.User.Firstname) |
+                    @Html.DisplayFor(model => model.Reparation.Vehicle.User.Phone)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h4><i class="bi bi-people"></i> Liste des employés</h4>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                @foreach (var reparationEmployee in Model.Reparation.ReparationEmployees)
+                {
+                    <li class="list-group-item">
+                        <i class="bi bi-person-circle"></i> @reparationEmployee.Employee.Firstname 
+                        @reparationEmployee.Employee.Lastname | 
+                        @reparationEmployee.Employee.Phone
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h4><i class="bi bi-list-check"></i>Réparation</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Type de réparation</th>
+                        <th>Prix</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model.Reparation.ReparationDetails)
+                    {
+                        <tr>
+                            <td>@detail.ReparationType.Label</td>
+                            <td>
+                                @if (detail.IsCustomCost)
+                                {
+                                    @detail.CustomCost
+                                }
+                                else
+                                {
+                                    @detail.ReparationType.DefaultCost
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h4><i class="bi bi-cash"></i> Prix total des réparations</h4>
+        </div>
+        <div class="card-body">
+            <p class="fw-bold fs-5">Total : @Model.TotalCost</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h4><i class="bi bi-receipt"></i> Liste des factures</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Numéro</th>
+                        <th>Date</th>
+                        <th>Fichier PDF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var facture in Model.Factures)
+                    {
+                        <tr>
+                            <td>@facture.Id</td>
+                            <td>@facture.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <a asp-page-handler="ExportToPdf" asp-route-id="@facture.Id" class="btn btn-primary">
+                                    <i class="bi bi-download"></i> Télécharger PDF
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a asp-page="./Edit" asp-route-id="@Model.Reparation.Id" class="btn btn-secondary">
+            <i class="bi bi-pencil"></i> Modifier
+        </a>
+        <a asp-page="./Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>

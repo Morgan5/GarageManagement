@@ -1,0 +1,124 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.Reparations.CreateModel
+
+@{
+    ViewData["Title"] = "Créer une Réparation";
+}
+
+<h1 class="mb-4">Ajout d'une réparation</h1>
+<hr />
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+                <!-- Véhicule -->
+                <div class="form-group">
+                    <label asp-for="Reparation.VehicleId" class="control-label font-weight-bold">Véhicule</label>
+                    <select asp-for="Reparation.VehicleId" class="form-control" asp-items="ViewBag.VehicleId"></select>
+                    <span asp-validation-for="Reparation.VehicleId" class="text-danger"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label asp-for="Reparation.Description" class="control-label font-weight-bold">Description</label>
+                    <textarea asp-for="Reparation.Description" class="form-control"></textarea>
+                    <span asp-validation-for="Reparation.Description" class="text-danger"></span>
+                </div>
+
+                <!-- Statut -->
+                <div class="form-group">
+                    <label asp-for="Reparation.Status" class="control-label font-weight-bold">Statut</label>
+                    <select asp-for="Reparation.Status" class="form-control">
+                        <option value="0">En attente</option>
+                        <option value="1">En cours</option>
+                        <option value="2">Terminée</option>
+                    </select>
+                    <span asp-validation-for="Reparation.Status" class="text-danger"></span>
+                </div>
+
+                <!-- Dates -->
+                <div class="form-group">
+                    <label asp-for="Reparation.StartAt" class="control-label font-weight-bold">Date de début</label>
+                    <input asp-for="Reparation.StartAt" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="Reparation.StartAt" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Reparation.FinishedAt" class="control-label font-weight-bold">Date prévue de fin</label>
+                    <input asp-for="Reparation.FinishedAt" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="Reparation.FinishedAt" class="text-danger"></span>
+                </div>
+
+                <!-- Types de réparation -->
+                <div class="form-group">
+                    <label class="control-label font-weight-bold">Types de réparation</label>
+                    <div id="repair-type-container">
+                        <div class="input-group mb-2">
+                            <select name="RepairTypes[]" class="form-control" asp-items="ViewBag.RepairTypeList"></select>
+                            <input type="text" data-val="true" data-val-number="The field DefaultCost must be a number." class="form-control" placeholder="Prix personnalisé (optionnel)" name="RepairCustomPrices[]" />
+                        </div>
+                    </div>
+                    <button type="button" id="add-repair-type" class="btn btn-secondary mt-2">Ajouter un type</button>
+                </div>
+
+                <!-- Employés -->
+                <br/>
+                <div class="form-group">
+                    <label class="control-label font-weight-bold">Employés</label>
+                    <div id="employee-container">
+                        <div class="input-group mb-2">
+                            <select name="Employees[]" class="form-control" asp-items="ViewBag.EmployeeList"></select>
+                        </div>
+                    </div>
+                    <button type="button" id="add-employee" class="btn btn-secondary mt-2">Ajouter un employé</button>
+                </div>
+
+                <!-- Bouton de soumission -->
+                <div class="form-group text-center mt-4">
+                    <input type="submit" value="Ajouter" class="btn btn-primary btn-lg" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Ajouter un type de réparation
+        document.getElementById('add-repair-type').addEventListener('click', function () {
+            const container = document.getElementById('repair-type-container');
+            const template = `
+                <div class="input-group mb-2">
+                    <select name="RepairTypes[]" class="form-control">${document.querySelector('select[name="RepairTypes[]"]').innerHTML}</select>
+                    <input type="text" data-val="true" data-val-number="The field DefaultCost must be a number." class="form-control" placeholder="Prix personnalisé (optionnel)" name="RepairCustomPrices[]" />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-danger remove-repair-type">X</button>
+                    </div>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', template);
+        });
+
+        // Ajouter un employé
+        document.getElementById('add-employee').addEventListener('click', function () {
+            const container = document.getElementById('employee-container');
+            const template = `
+                <div class="input-group mb-2">
+                    <select name="Employees[]" class="form-control">${document.querySelector('select[name="Employees[]"]').innerHTML}</select>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-danger remove-employee">X</button>
+                    </div>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', template);
+        });
+
+        // Supprimer un élément
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('remove-repair-type') || event.target.classList.contains('remove-employee')) {
+                event.target.closest('.input-group').remove();
+            }
+        });
+    </script>
+}

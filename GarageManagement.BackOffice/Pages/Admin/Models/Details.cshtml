@@ -1,0 +1,30 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.Models.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Détails du modèle</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Model.Label)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Model.Label)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Model.Brand)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Model.Brand.Label)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Model.Id">Modifier</a> |
+    <a asp-page="./Index">Retour</a>
+</div>

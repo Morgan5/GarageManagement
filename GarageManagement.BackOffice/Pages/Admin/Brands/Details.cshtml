@@ -1,0 +1,24 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.Brands.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Détails de la marque</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Brand.Label)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Brand.Label)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Brand.Id">Modifier</a> |
+    <a asp-page="./Index">Retour</a>
+</div>

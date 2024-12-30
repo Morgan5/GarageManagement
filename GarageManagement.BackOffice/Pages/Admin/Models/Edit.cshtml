@@ -1,0 +1,41 @@
+@page
+@model GarageManagement.BackOffice.Pages.Admin.Models.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1 class="mb-4">Modification d'un Modèle</h1>
+<hr />
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Model.Id" />
+                <div class="form-group">
+                    <span class="text-danger">*</span>
+                    <label asp-for="Model.Label" class="control-label"></label>
+                    <input asp-for="Model.Label" class="form-control" />
+                    <span asp-validation-for="Model.Label" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <span class="text-danger">*</span>
+                    <label asp-for="Model.BrandId" class="control-label"></label>
+                    <select asp-for="Model.BrandId" class="form-control" asp-items="ViewBag.BrandId"></select>
+                    <span asp-validation-for="Model.BrandId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+            <!-- Lien de retour -->
+            <div class="text-center mt-4">
+                <a asp-page="Index" class="btn btn-link">Retour à la liste des modèles</a>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
