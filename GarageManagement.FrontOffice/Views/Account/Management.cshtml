@@ -1,0 +1,106 @@
+@model GarageManagement.FrontOffice.Models.User
+@using GarageManagement.FrontOffice.Helpers
+
+@{
+    ViewData["Title"] = "Gestion du Profil";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<!-- User Profile Form -->
+<form asp-action="Management" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="Firstname"></label>
+        <input asp-for="Firstname" class="form-control" />
+        <span asp-validation-for="Firstname" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Lastname"></label>
+        <input asp-for="Lastname" class="form-control" />
+        <span asp-validation-for="Lastname" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Birthdate"></label>
+        <input asp-for="Birthdate" type="date" class="form-control" />
+        <span asp-validation-for="Birthdate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Phone"></label>
+        <input asp-for="Phone" class="form-control" />
+        <span asp-validation-for="Phone" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger mt-3">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+</form>
+<br/>
+
+<!-- Appointment History -->
+<h3>Historique des rendez-vous</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date de création</th>
+            <th>Motif</th>
+            <th>Date prévue</th>
+            <th>Date programmée</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var appointment in Model.Appointments)
+        {
+            <tr>
+                <td>@appointment.CreatedAt</td>
+                <td>@appointment.Motif</td>
+                <td>@appointment.ExpectedAt</td>
+                <td>@appointment.ProgrammedAt</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Reparation History -->
+<h3>Historique des réparations</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date de création</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Date de début</th>
+            <th>Date prévue de fin</th>
+            <th>Date de fin réelle</th>
+            <th>Véhicule</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reparation in Model.Reparations)
+        {
+            <tr>
+                <td>@reparation.CreatedAt</td>
+                <td>@reparation.Description</td>
+                <td>@StatusHelper.GetStatusDescription(reparation.Status)</td>
+                <td>@reparation.StartAt</td>
+                <td>@reparation.FinishedAt</td>
+                <td>@reparation.EndAt</td>
+                <td>@reparation.Vehicle.Immatriculation</td>
+            </tr>
+        }
+    </tbody>
+</table>

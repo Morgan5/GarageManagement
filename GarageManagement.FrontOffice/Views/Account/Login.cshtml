@@ -1,0 +1,100 @@
+@{
+    ViewData["Title"] = "Connexion";
+}
+
+<div class="login-wrapper">
+    <div class="login-container">
+        <h2 class="title">Connexion Client</h2>
+        <form method="post">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <input type="password" name="password" id="password" class="form-control" required />
+            </div>
+            <div>
+                <button type="submit" class="btn-primary">Se connecter</button>
+            </div>
+        </form>
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger mt-3">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .login-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* Prend toute la hauteur de la fenêtre */
+        background-color: #f3f8ff; /* Conserve le fond bleu clair */
+        padding: 10px; /* Ajoute un espace pour éviter que le conteneur touche les bords */
+    }
+
+    .login-container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre élégante */
+        width: 100%;
+        max-width: 400px; /* Limite la largeur à 400px */
+        box-sizing: border-box; /* Inclut les bordures et le padding dans la largeur totale */
+        text-align: center; /* Centre le texte dans le conteneur */
+    }
+
+    .login-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        color: #004080;
+        margin-bottom: 5px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cce7ff;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #004080;
+        box-shadow: 0 0 5px rgba(0, 64, 128, 0.2);
+    }
+
+    .btn-primary {
+        background-color: #004080;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .btn-primary:hover {
+        background-color: #0066cc;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 14px;
+        text-align: center;
+    }
+</style>
