@@ -33,9 +33,22 @@ namespace GarageManagement.BackOffice.Pages.Admin.Appointments
         // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
+            // Vérification de la cohérence des dates
             if (Appointment.ExpectedAt < DateTime.Now)
             {
                 ModelState.AddModelError(string.Empty, "La date prévue ne peut pas être avant la date du jour.");
+                ViewData["VehicleId"] = new SelectList(_context.Vehicle, "Id", "Immatriculation");
+                return Page();
+            }
+
+            // Vérification de la disponibilité des rendez-vous
+            var existingAppointment = _context.Appointment.Where(a => 
+                (Appointment.ExpectedAt == a.ExpectedAt && a.ProgrammedAt == null) ||
+                (Appointment.ExpectedAt == a.ProgrammedAt)
+            ).FirstOrDefault();
+            if (existingAppointment != null)
+            {
+                ModelState.AddModelError(string.Empty, "Un rendez-vous existe deja dans cet horaire");
                 ViewData["VehicleId"] = new SelectList(_context.Vehicle, "Id", "Immatriculation");
                 return Page();
             }

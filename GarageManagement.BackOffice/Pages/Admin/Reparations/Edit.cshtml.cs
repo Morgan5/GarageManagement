@@ -81,7 +81,7 @@ namespace GarageManagement.BackOffice.Pages.Admin.Reparations
             {
                 var employee = await _context.Employee.FindAsync(long.Parse(employeeId));
 
-                var existingRepair = _context.ReparationEmployee
+                var existingRepair = _context.ReparationEmployee.AsNoTracking()
                     .Where(re => re.EmployeeId == employee.Id &&
                                 re.Reparation.StartAt < Reparation.FinishedAt && 
                                 re.Reparation.FinishedAt > Reparation.StartAt &&
@@ -91,7 +91,7 @@ namespace GarageManagement.BackOffice.Pages.Admin.Reparations
 
                 if (existingRepair != null)
                 {
-                    var existingRepairForItself = _context.ReparationEmployee
+                    var existingRepairForItself = _context.ReparationEmployee.AsNoTracking()
                     .Where(re => re.EmployeeId == employee.Id &&
                                 re.Reparation.StartAt < Reparation.FinishedAt && 
                                 re.Reparation.FinishedAt > Reparation.StartAt &&
@@ -125,7 +125,7 @@ namespace GarageManagement.BackOffice.Pages.Admin.Reparations
             _context.Attach(Reparation).State = EntityState.Modified;
 
             // Suppression et recréation des détails et employés associés
-            var existingDetails = _context.ReparationDetail.Where(rd => rd.ReparationId == Reparation.Id);
+            var existingDetails = _context.ReparationDetail.AsNoTracking().Where(rd => rd.ReparationId == Reparation.Id);
             _context.ReparationDetail.RemoveRange(existingDetails);
 
             var repairTypeIds = Request.Form["RepairTypes[]"].ToArray();
@@ -143,7 +143,7 @@ namespace GarageManagement.BackOffice.Pages.Admin.Reparations
                 _context.ReparationDetail.Add(detail);
             }
 
-            var existingEmployees = _context.ReparationEmployee.Where(re => re.ReparationId == Reparation.Id);
+            var existingEmployees = _context.ReparationEmployee.AsNoTracking().Where(re => re.ReparationId == Reparation.Id);
             _context.ReparationEmployee.RemoveRange(existingEmployees);
 
             foreach (var employeeId in Request.Form["Employees[]"])

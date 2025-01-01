@@ -4,5 +4,205 @@
     ViewData["Title"] = "Dashboard";
 }
 
-<h2>Welcome, Admin</h2>
-<p><a href="/Admin/Logout">Logout</a></p>
+<div class="container py-4">
+    <h2 class="text-center mb-4">Bienvenue, Admin</h2>
+
+    <div class="card mb-5 shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title">Statistiques des Rendez-vous</h3>
+            <div class="mb-3">
+                <label for="appointmentYear" class="form-label">Sélectionnez l'année</label>
+                <select id="appointmentYear" class="form-select" onchange="updateAppointmentChart()">
+                    @foreach (var year in Model.AvailableYears)
+                    {
+                        <!option value="@year" @(year == Model.CurrentYear ? "selected" : "")>@year</!option>
+                    }
+                </select>
+            </div>
+            <canvas id="appointmentChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    
+    <div class="card mb-5 shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title">Statistiques des Réparations</h3>
+            <div>
+                <h4>Types de pannes fréquentes</h4>
+                <div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 800px;">
+                    <canvas id="reparationPieChart"></canvas>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <h4>Réparations par période</h4>
+                <div class="mb-3">
+                    <label for="reparationYear" class="form-label">Sélectionnez l'année</label>
+                    <select id="reparationYear" class="form-select" onchange="updateReparationChart()">
+                        @foreach (var year in Model.AvailableYearsReparation)
+                        {
+                            <!option value="@year" @(year == Model.CurrentYear ? "selected" : "")>@year</!option>
+                        }
+                    </select>
+                </div>
+                <canvas id="reparationChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-5 shadow-sm">
+        <div class="card-body">
+            <h3 class="card-title">Statistiques des Réparations par Employé</h3>
+            <div class="mb-3">
+                <label for="employeeYear" class="form-label">Sélectionnez l'année</label>
+                <select id="employeeYear" class="form-select" onchange="updateEmployeeChart()">
+                    @foreach (var year in Model.AvailableYears)
+                    {
+                        <!option value="@year" @(year == Model.CurrentYear ? "selected" : "")>@year</!option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="employeeMonth" class="form-label">Sélectionnez le mois</label>
+                <select id="employeeMonth" class="form-select" onchange="updateEmployeeChart()">
+                @{
+                    var months = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.MonthNames
+                                .Where(m => !string.IsNullOrEmpty(m)) // Exclure les mois vides
+                                .Select((name, index) => new { Label = name, Value = (index + 1).ToString("D2") })
+                                .ToList();
+                }
+                    @foreach (var month in months)
+                    {
+                        <!option value="@month.Value" @(month.Value == Model.CurrentMonth.ToString("D2") ? "selected" : "")>@month.Label</!option>
+                    }
+                </select>
+            </div>
+            <canvas id="employeeChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        let appointmentChart;
+        document.addEventListener("DOMContentLoaded", async function () {
+            const ctx = document.getElementById("appointmentChart").getContext("2d");
+            appointmentChart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: "Fréquence des rendez-vous",
+                        data: [],
+                        backgroundColor: "rgba(75, 192, 192, 0.2)",
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { beginAtZero: true },
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+            await updateAppointmentChart();
+        });
+
+        async function updateAppointmentChart () {
+            const selectedYear = document.getElementById("appointmentYear").value;
+            const response = await fetch(`/Dashboard?handler=AppointmentStats&year=${selectedYear}`);
+            const newStats = await response.json();
+            appointmentChart.data.labels = Object.keys(newStats);
+            appointmentChart.data.datasets[0].data = Object.values(newStats);
+            appointmentChart.update();
+        }
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById("reparationPieChart").getContext("2d");
+            const reparationStats = @Html.Raw(Json.Serialize(Model.ReparationTypeStats));
+            const labels = Object.keys(reparationStats);
+            const data = Object.values(reparationStats);
+
+            new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"],
+                        hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF", "#FF9F40"]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: "top" },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const count = tooltipItem.raw;
+                                    const label = tooltipItem.label;
+                                    return `${label}: ${count}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script>
+        let reparationChart;
+        document.addEventListener("DOMContentLoaded", async function () {
+            const ctx = document.getElementById("reparationChart").getContext("2d");
+            reparationChart = new Chart(ctx, {
+                type: "bar",
+                data: { labels: [], datasets: [{ label: "Fréquence des réparations", data: [], backgroundColor: "rgba(75, 192, 192, 0.2)", borderColor: "rgba(75, 192, 192, 1)", borderWidth: 1 }] },
+                options: { responsive: true, scales: { x: { beginAtZero: true }, y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+            });
+            await updateReparationChart();
+        });
+
+        async function updateReparationChart () {
+            const selectedYear = document.getElementById("reparationYear").value;
+            const response = await fetch(`/Dashboard?handler=ReparationPeriodStats&year=${selectedYear}`);
+            const newStats = await response.json();
+            reparationChart.data.labels = Object.keys(newStats);
+            reparationChart.data.datasets[0].data = Object.values(newStats);
+            reparationChart.update();
+        }
+    </script>
+
+    <script>
+        let employeeChart;
+        document.addEventListener("DOMContentLoaded", async function () {
+            const ctx = document.getElementById("employeeChart").getContext("2d");
+            employeeChart = new Chart(ctx, {
+                type: "bar",
+                data: { labels: [], datasets: [{ label: "Nombre de réparations", data: [], backgroundColor: "rgba(75, 192, 192, 0.2)", borderColor: "rgba(75, 192, 192, 1)", borderWidth: 1 }] },
+                options: { responsive: true, scales: { x: { beginAtZero: true, title: { display: true, text: "Employés" } }, y: { beginAtZero: true, title: { display: true, text: "Nombre de réparations" }, ticks: { stepSize: 1 } } } }
+            });
+            await updateEmployeeChart();
+        });
+
+        async function updateEmployeeChart() {
+            const selectedYear = document.getElementById("employeeYear").value;
+            const selectedMonth = document.getElementById("employeeMonth").value;
+
+            const response = await fetch(`/Dashboard?handler=EmployeeStats&year=${selectedYear}&month=${selectedMonth}`);
+            const stats = await response.json();
+            const employeeNames = Object.keys(stats);
+            // eto ilay somme réparation employés
+            const repairCounts = employeeNames.map(name => Object.values(stats[name]).reduce((sum, count) => sum + count, 0));
+            employeeChart.data.labels = employeeNames;
+            employeeChart.data.datasets[0].data = repairCounts;
+            employeeChart.update();
+        }
+    </script>
+}
