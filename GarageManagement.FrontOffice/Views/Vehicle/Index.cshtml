@@ -1,45 +1,65 @@
 @model GarageManagement.FrontOffice.Models.VehicleViewModel
 
-@{
-    ViewData["Title"] = "Véhicules";
-}
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">Liste des véhicules</h2>
 
-<h2>Liste des véhicules</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Immatriculation</th>
-            <th>Détail</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var vehicle in Model.Vehicles)
-        {
-            <tr>
-                <td>@vehicle.Immatriculation</td>
-                <td>@vehicle.Model.Brand.Label @vehicle.Model.Label</td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<h3>Ajouter un nouveau véhicule</h3>
-<form method="post">
-    <div class="form-group">
-        <label for="Immatriculation">Immatriculation</label>
-        <input type="text" class="form-control" id="Immatriculation" name="NewVehicle.Immatriculation" required />
+    <!-- Liste des véhicules -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Immatriculation</th>
+                        <th>Détail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Vehicles.Any())
+                    {
+                        @foreach (var vehicle in Model.Vehicles)
+                        {
+                            <tr>
+                                <td>@vehicle.Immatriculation</td>
+                                <td>@vehicle.Model.Brand.Label @vehicle.Model.Label</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="2" class="text-center text-muted">
+                                Aucun véhicule enregistré.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="Model">Modèle</label>
-        <select class="form-control" id="Model" name="NewVehicle.ModelId" required>
-            @foreach (var vehicleModel in Model.Models)
-            {
-                <option value="@vehicleModel.Id">@vehicleModel.Label</option>
-            }
-        </select>
 
+    <!-- Formulaire d'ajout de véhicule -->
+    <h3 class="text-primary">Ajouter un nouveau véhicule</h3>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post">
+                <div class="form-group">
+                    <label for="Immatriculation" class="form-label">Immatriculation</label>
+                    <input type="text" class="form-control" id="Immatriculation" name="NewVehicle.Immatriculation" required />
+                </div>
+                <div class="form-group mt-3">
+                    <label for="Model" class="form-label">Modèle</label>
+                    <select class="form-control" id="Model" name="NewVehicle.ModelId" required>
+                        <option value="">Sélectionner un modèle</option>
+                        @foreach (var vehicleModel in Model.Models)
+                        {
+                            <option value="@vehicleModel.Id">@vehicleModel.Label</option>
+                        }
+                    </select>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <br />
-    <button type="submit" class="btn btn-primary">Ajouter</button>
-</form>
+</div>

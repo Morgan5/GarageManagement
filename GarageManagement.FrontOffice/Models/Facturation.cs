@@ -19,6 +19,6 @@ namespace GarageManagement.FrontOffice.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? TotalCost { get; set; }
 
-        public ICollection<FacturationDetail> FacturationDetails { get; set; }
+        public List<FacturationDetail> FacturationDetails { get; set; }
     }
 }

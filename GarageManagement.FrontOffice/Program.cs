@@ -18,6 +18,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<VehicleService>();
 builder.Services.AddScoped<AppointmentService>();
+builder.Services.AddScoped<FactureService>();
 
 var app = builder.Build();
 

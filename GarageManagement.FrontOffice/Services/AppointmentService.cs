@@ -16,14 +16,33 @@ namespace GarageManagement.FrontOffice.Services
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public async Task<int> AddClientAppointment(Appointment appointment)
+        public async Task<(bool isSuccess, string errorMessage)> AddClientAppointment(Appointment appointment)
         {
+            if (appointment.ExpectedAt < DateTime.Now)
+            {
+                return (false, "La date prévue ne peut pas être avant la date du jour.");
+            }
+
             using (var connection = new SqlConnection(_connectionString))
             {
-                string sql = @"INSERT INTO Appointment (VehicleId, Motif, CreatedAt, ExpectedAt) 
-                               VALUES (@VehicleId, @Motif, @CreatedAt, @ExpectedAt)";
-                return await connection.ExecuteAsync(sql, appointment);
+                // Vérification de la disponibilité des rendez-vous
+                string checkSql = @"SELECT 1 
+                                    FROM Appointment 
+                                    WHERE (ExpectedAt = @ExpectedAt AND ProgrammedAt IS NULL) 
+                                    OR (ProgrammedAt = @ExpectedAt)";
+                var isConflict = await connection.ExecuteScalarAsync<bool>(checkSql, appointment);
+                if (isConflict)
+                {
+                    return (false, "Un rendez-vous existe déjà à cet horaire.");
+                }
+
+                // Insertion du rendez-vous
+                string insertSql = @"INSERT INTO Appointment (VehicleId, Motif, CreatedAt, ExpectedAt) 
+                                    VALUES (@VehicleId, @Motif, @CreatedAt, @ExpectedAt)";
+                await connection.ExecuteAsync(insertSql, appointment);
             }
+
+            return (true, null);
         }
     }
 }

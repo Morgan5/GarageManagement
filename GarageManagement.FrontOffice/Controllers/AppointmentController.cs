@@ -47,14 +47,18 @@ namespace GarageManagement.FrontOffice.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // Ajouter l'ID du véhicule et de l'utilisateur
-            appointment.VehicleId = appointment.VehicleId;
             appointment.CreatedAt = DateTime.Now;
 
-            // Ajouter le rendez-vous via le service
-            await _appointmentService.AddClientAppointment(appointment);
+            var (isSuccess, errorMessage) = await _appointmentService.AddClientAppointment(appointment);
 
-            // Rediriger vers la page de confirmation ou la liste des rendez-vous
+            if (!isSuccess)
+            {
+                ModelState.AddModelError(string.Empty, errorMessage);
+                var vehicles = await _vehicleService.GetUserVehicles(userId);
+                ViewData["Vehicles"] = vehicles;
+                return View(appointment);
+            }
+
             return RedirectToAction("Index");
         }
     }

@@ -2,30 +2,44 @@
     ViewData["Title"] = "Ajout Rendez-vous";
 }
 
-<h2>Ajout Rendez-vous</h2>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 class="text-center text-primary mb-4">@ViewData["Title"]</h2>
 
-@* Formulaire de création de RDV *@
-<form method="post">
-    <div class="form-group">
-        <label for="VehicleId">Sélectionner un véhicule</label>
-        <select class="form-control" id="VehicleId" name="VehicleId" required>
-            <option value="">Choisir un véhicule</option>
-            @foreach (var vehicle in ViewData["Vehicles"] as List<Vehicle>)
-            {
-                <option value="@vehicle.Id">@vehicle.Immatriculation</option>
-            }
-        </select>
+            <!-- Formulaire de création de RDV -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        
+                        <div class="mb-3">
+                            <label for="VehicleId" class="form-label">Sélectionner un véhicule</label>
+                            <select class="form-select" id="VehicleId" name="VehicleId" required>
+                                <option value="">Choisir un véhicule</option>
+                                @foreach (var vehicle in ViewData["Vehicles"] as List<Vehicle>)
+                                {
+                                    <option value="@vehicle.Id">@vehicle.Immatriculation</option>
+                                }
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="ExpectedAt" class="form-label">Date du rendez-vous</label>
+                            <input type="datetime-local" class="form-control" id="ExpectedAt" name="ExpectedAt" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Motif" class="form-label">Motif</label>
+                            <input type="text" class="form-control" id="Motif" name="Motif" required />
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Créer le rendez-vous</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    
-    <div class="form-group">
-        <label for="ExpectedAt">Date du rendez-vous</label>
-        <input type="datetime-local" class="form-control" id="ExpectedAt" name="ExpectedAt" required />
-    </div>
-    
-    <div class="form-group">
-        <label for="Motif">Motif</label>
-        <input type="text" class="form-control" id="Motif" name="Motif" required />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Créer le rendez-vous</button>
-</form>
+</div>
