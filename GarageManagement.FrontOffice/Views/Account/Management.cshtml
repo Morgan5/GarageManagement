@@ -80,6 +80,7 @@
                     <th>Motif</th>
                     <th>Date prévue</th>
                     <th>Date programmée</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -90,6 +91,11 @@
                         <td>@appointment.Motif</td>
                         <td>@appointment.ExpectedAt</td>
                         <td>@appointment.ProgrammedAt</td>
+                        <td>
+                            @if(appointment.ProgrammedAt == null ) {
+                                <a class="btn btn-warning btn-sm" asp-action="Edit" asp-controller="Appointment" asp-route-id="@appointment.Id">Modifier</a>
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>

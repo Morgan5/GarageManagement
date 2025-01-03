@@ -11,6 +11,7 @@
                     <tr>
                         <th>Immatriculation</th>
                         <th>Détail</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -21,6 +22,7 @@
                             <tr>
                                 <td>@vehicle.Immatriculation</td>
                                 <td>@vehicle.Model.Brand.Label @vehicle.Model.Label</td>
+                                <td><a class="btn btn-warning btn-sm" asp-action="Edit" asp-controller="Vehicle" asp-route-id="@vehicle.Id">Modifier</a></td>
                             </tr>
                         }
                     }

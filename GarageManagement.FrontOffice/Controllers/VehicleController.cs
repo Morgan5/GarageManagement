@@ -72,5 +72,44 @@ namespace GarageManagement.FrontOffice.Controllers
             
             return RedirectToAction("Index");
         }
+
+        // Redirection vers la modification d'un véhicule du client
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var vehicle = await _vehicleService.GetVehicleByIdAsync(id);
+
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            // Récupérer les modèles de véhicules
+            var models = await _vehicleService.GetAllModelsAsync();
+            ViewBag.Models = models;
+
+            return View(vehicle);
+        }
+
+        // Modifier un véhicule du client
+        [HttpPost]
+        public IActionResult Edit(Vehicle vehicle) 
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            _vehicleService.UpdateVehicle(vehicle);
+
+            return RedirectToAction("Index");
+        }
     }
 }

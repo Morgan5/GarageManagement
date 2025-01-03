@@ -59,7 +59,56 @@ namespace GarageManagement.FrontOffice.Controllers
                 return View(appointment);
             }
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Management", "Account");
         }
+
+        // Redirection vers la modification d'un rendez-vous
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
+
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            // Récupérer les modèles de véhicules du client
+            var vehicle = await _vehicleService.GetUserVehicles(userId);
+            ViewBag.Vehicles = vehicle;
+
+            return View(appointment);
+        }
+
+        // Méthode POST pour modifier le rendez-vous
+        [HttpPost]
+        public async Task<IActionResult> Edit(Appointment appointment)
+        {
+            var userIdClaim = User.FindFirst("UserId");
+            if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Vérification de disponibilité
+            var (isSuccess, errorMessage) = await _appointmentService.EditClientAppointment(appointment);
+
+            if (!isSuccess)
+            {
+                ModelState.AddModelError(string.Empty, errorMessage);
+                var vehicle = await _vehicleService.GetUserVehicles(userId);
+                ViewBag.Vehicles = vehicle;
+                return View(appointment);
+            }
+
+            return RedirectToAction("Management", "Account");
+        }
+
     }
 }

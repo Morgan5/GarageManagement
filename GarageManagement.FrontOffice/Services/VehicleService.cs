@@ -17,33 +17,6 @@ namespace GarageManagement.FrontOffice.Services
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        // Récupérer les véhicules du client par ID utilisateur
-        /*public async Task<IEnumerable<Vehicle>> GetVehiclesByUserIdAsync(long userId)
-        {
-            using var connection = new SqlConnection(_connectionString);
-            await connection.OpenAsync();
-
-            var query = @"
-                SELECT * FROM Vehicle WHERE UserId = @UserId;
-                SELECT * FROM Model WHERE Id IN (SELECT ModelId FROM Vehicle WHERE UserId = @UserId);
-                SELECT * FROM Brand WHERE Id IN (SELECT BrandId FROM Model WHERE Id IN (SELECT ModelId FROM Vehicle WHERE UserId = @UserId));
-            ";
-
-            using var multi = await connection.QueryMultipleAsync(query, new { UserId = userId });
-            
-            var vehicles = await multi.ReadAsync<Vehicle>();
-            var models = await multi.ReadAsync<Model>();
-            var brands = await multi.ReadAsync<Brand>();
-
-            foreach (var vehicle in vehicles)
-            {
-                vehicle.Model = models.FirstOrDefault(m => m.Id == vehicle.ModelId);
-                vehicle.Model.Brand = brands.FirstOrDefault(b => b.Id == vehicle.Model.BrandId);
-            }
-
-            return vehicles;
-        }*/
-
         public async Task<IEnumerable<Vehicle>> GetVehiclesByUserIdAsync(long userId)
         {
             using var connection = new SqlConnection(_connectionString);
@@ -104,6 +77,32 @@ namespace GarageManagement.FrontOffice.Services
                 string sql = "SELECT * FROM Vehicle WHERE UserId = @UserId";
                 return (await connection.QueryAsync<Vehicle>(sql, new { UserId = userId })).AsList();
             }
+        }
+
+        // Récuperer véhicule par id
+        public async Task<Vehicle> GetVehicleByIdAsync(long id)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+            
+            var query = "SELECT * FROM Vehicle WHERE Id = @Id";
+            return await connection.QuerySingleOrDefaultAsync<Vehicle>(query, new { Id = id });
+        }
+
+        // Modifier un véhicule
+        public async Task UpdateVehicle(Vehicle vehicle)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var query = @"UPDATE Vehicle SET Immatriculation = @Immatriculation, ModelId = @ModelId WHERE Id = @Id";
+            
+            await connection.ExecuteAsync(query, new 
+            {
+                vehicle.Immatriculation,
+                vehicle.ModelId,
+                vehicle.Id
+            });
         }
     }
 }

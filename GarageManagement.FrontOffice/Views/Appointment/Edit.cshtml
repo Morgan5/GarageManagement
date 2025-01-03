@@ -1,0 +1,47 @@
+@model GarageManagement.FrontOffice.Models.Appointment
+
+@{
+    ViewData["Title"] = "Modification Rendez-vous";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 class="text-center text-primary mb-4">@ViewData["Title"]</h2>
+        </div>
+
+            <!-- Formulaire de modification de RDV -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="VehicleId" class="form-label">Sélectionner un véhicule</label>
+                            <select asp-for="VehicleId" class="form-select" required>
+                                <option value="">Choisir un véhicule</option>
+                                @foreach (var vehicle in ViewBag.Vehicles as List<Vehicle>)
+                                {
+                                    <!option value="@vehicle.Id" @(Model.VehicleId == vehicle.Id ? "selected" : "")>@vehicle.Immatriculation</!option>
+                                }
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="ExpectedAt" class="form-label">Date du rendez-vous</label>
+                            <input asp-for="ExpectedAt" type="datetime-local" class="form-control" required />
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Motif" class="form-label">Motif</label>
+                            <input asp-for="Motif" type="text" class="form-control" required />
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Modifier le rendez-vous</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </div>
+</div>
